@@ -7,9 +7,12 @@ from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "sqlite:///todo.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "sqlite:///todo.db")  # Fallback to SQLite for local development
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_secret_key'  # For session management
 app.instance_path = "/tmp"
@@ -22,7 +25,7 @@ class User(UserMixin, db.Model):
     _tablename_="user"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)  # Make sure this column exists
+    password = db.Column(db.String(512), nullable=False)  # Make sure this column exists
 
 # Flask-Login Setup
 login_manager = LoginManager()
